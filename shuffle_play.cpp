@@ -9,7 +9,7 @@
 
 using namespace std;
 
-char * play_random_flac(const char * dirname) {
+char * play_random_flac(const char * player, const char * dirname) {
 	DIR *dp;
 	struct stat st;
 	struct dirent *dir;
@@ -35,10 +35,10 @@ char * play_random_flac(const char * dirname) {
 		srand(time(NULL));
 		if (flacs.size() > 0) {
 			cout << "play -> " << flacs[rand()%flacs.size()] << endl;
-			string cmd = "flac123 \"" + flacs[rand()%flacs.size()] + "\"";
+			string cmd = string(player) + " \"" + flacs[rand()%flacs.size()] + "\"";
 			int res = system(cmd.c_str());
 		} else if (dirs.size() > 0) {
-			play_random_flac(dirs[rand()%dirs.size()].c_str());
+			play_random_flac(player, dirs[rand()%dirs.size()].c_str());
 		} else {
 			// ディレクトリ最深部までflacがないのでmain()で再スキャン
 			cout << "rescanning..." << endl;
@@ -47,12 +47,12 @@ char * play_random_flac(const char * dirname) {
 }
 
 int main(int argc, char * argv[]) {
-	if (argc < 2) {
-		cerr << "arg error" << endl;
+	if (argc < 3) {
+		cerr << "useage: ./shuffle_player [player] [music directory]" << endl;
 		exit(0);
 	}
 	while (1) {
-		play_random_flac(argv[1]);
+		play_random_flac(argv[1], argv[2]);
 		sleep(1);
 	}
 }
